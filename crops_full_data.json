@@ -1,0 +1,452 @@
+[
+  {
+    "name": "Apple",
+    "baseWeight": 2.85,
+    "Base Price": 248
+  },
+  {
+    "name": "Avocado",
+    "baseWeight": 3.32,
+    "Base Price": 91
+  },
+  {
+    "name": "Bamboo",
+    "baseWeight": 3.8,
+    "Base Price": 3610
+  },
+  {
+    "name": "Banana",
+    "baseWeight": 1.42,
+    "Base Price": 1805
+  },
+  {
+    "name": "Beanstalk",
+    "baseWeight": 9.1,
+    "Base Price": 25270
+  },
+  {
+    "name": "Bee Balm",
+    "baseWeight": 0.94,
+    "Base Price": 16245
+  },
+  {
+    "name": "Bell Pepper",
+    "baseWeight": 7.61,
+    "Base Price": 4964
+  },
+  {
+    "name": "Bendboo",
+    "baseWeight": 17.09,
+    "Base Price": 138988
+  },
+  {
+    "name": "Blood Banana",
+    "baseWeight": 1.41,
+    "Base Price": 5415
+  },
+  {
+    "name": "Blueberry",
+    "baseWeight": 0.17,
+    "Base Price": 18
+  },
+  {
+    "name": "Cacao",
+    "baseWeight": 7.6,
+    "Base Price": 10830
+  },
+  {
+    "name": "Cactus",
+    "baseWeight": 6.65,
+    "Base Price": 3069
+  },
+  {
+    "name": "Candy Blossom",
+    "baseWeight": 2.85,
+    "Base Price": 90250
+  },
+  {
+    "name": "Candy Sunflower",
+    "baseWeight": 1.428,
+    "Base Price": 72200
+  },
+  {
+    "name": "Cantaloupe",
+    "baseWeight": 5.22,
+    "Base Price": 30685
+  },
+  {
+    "name": "Carrot",
+    "baseWeight": 0.24,
+    "Base Price": 18
+  },
+  {
+    "name": "Cauliflower",
+    "baseWeight": 4.74,
+    "Base Price": 36
+  },
+  {
+    "name": "Celestiberry",
+    "baseWeight": 1.9,
+    "Base Price": 9025
+  },
+  {
+    "name": "Cherry Blossom",
+    "baseWeight": "coming soon",
+    "Base Price": 550
+  },
+  {
+    "name": "Chocolate Carrot",
+    "baseWeight": 0.262,
+    "Base Price": 9960
+  },
+  {
+    "name": "Coconut",
+    "baseWeight": 13.31,
+    "Base Price": 361
+  },
+  {
+    "name": "Cocovine",
+    "baseWeight": 13.3,
+    "Base Price": 60166
+  },
+  {
+    "name": "Corn",
+    "baseWeight": 1.9,
+    "Base Price": 36
+  },
+  {
+    "name": "Cranberry",
+    "baseWeight": 0.95,
+    "Base Price": 1805
+  },
+  {
+    "name": "Crocus",
+    "baseWeight": 0.285,
+    "Base Price": 27075
+  },
+  {
+    "name": "Cursed Fruit",
+    "baseWeight": 22.9,
+    "Base Price": 15000
+  },
+  {
+    "name": "Daffodil",
+    "baseWeight": 0.16,
+    "Base Price": 903
+  },
+  {
+    "name": "Dandelion",
+    "baseWeight": 3.79,
+    "Base Price": 45125
+  },
+  {
+    "name": "Dragon Fruit",
+    "baseWeight": 11.38,
+    "Base Price": 4287
+  },
+  {
+    "name": "Dragon Pepper",
+    "baseWeight": 5.69,
+    "Base Price": 80000
+  },
+  {
+    "name": "Durian",
+    "baseWeight": 7.6,
+    "Base Price": 6317
+  },
+  {
+    "name": "Easter Egg",
+    "baseWeight": 2.85,
+    "Base Price": 2256
+  },
+  {
+    "name": "Eggplant",
+    "baseWeight": 4.75,
+    "Base Price": 6769
+  },
+  {
+    "name": "Elephant Ears",
+    "baseWeight": 17.1,
+    "Base Price": 69492
+  },
+  {
+    "name": "Ember Lily",
+    "baseWeight": 11.4,
+    "Base Price": 50138
+  },
+  {
+    "name": "Feijoa",
+    "baseWeight": 9.5,
+    "Base Price": 27075
+  },
+  {
+    "name": "Foxglove",
+    "baseWeight": 1.9,
+    "Base Price": 18050
+  },
+  {
+    "name": "Glowshroom",
+    "baseWeight": 0.7,
+    "Base Price": 271
+  },
+  {
+    "name": "Grape",
+    "baseWeight": 2.85,
+    "Base Price": 7085
+  },
+  {
+    "name": "Green Apple",
+    "baseWeight": 2.85,
+    "Base Price": 271
+  },
+  {
+    "name": "Hive Fruit",
+    "baseWeight": 7.59,
+    "Base Price": 55955
+  },
+  {
+    "name": "Honeysuckle",
+    "baseWeight": 11.4,
+    "Base Price": 90250
+  },
+  {
+    "name": "Kiwi",
+    "baseWeight": 4.75,
+    "Base Price": 2482
+  },
+  {
+    "name": "Lavender",
+    "baseWeight": 0.25,
+    "Base Price": 22563
+  },
+  {
+    "name": "Lemon",
+    "baseWeight": "coming soon",
+    "Base Price": 500
+  },
+  {
+    "name": "Lilac",
+    "baseWeight": 2.846,
+    "Base Price": 31588
+  },
+  {
+    "name": "Loquat",
+    "baseWeight": 6.17,
+    "Base Price": 7220
+  },
+  {
+    "name": "Lotus",
+    "baseWeight": 18.99,
+    "Base Price": 15343
+  },
+  {
+    "name": "Lumira",
+    "baseWeight": 5.69,
+    "Base Price": 76713
+  },
+  {
+    "name": "Mango",
+    "baseWeight": 14.28,
+    "Base Price": 5866
+  },
+  {
+    "name": "Manuka Flower",
+    "baseWeight": 0.289,
+    "Base Price": 22563
+  },
+  {
+    "name": "Mint",
+    "baseWeight": 0.95,
+    "Base Price": 4738
+  },
+  {
+    "name": "Moon Blossom",
+    "baseWeight": 2.85,
+    "Base Price": 60166
+  },
+  {
+    "name": "Moon Mango",
+    "baseWeight": 14.25,
+    "Base Price": 45125
+  },
+  {
+    "name": "Moon Melon",
+    "baseWeight": 7.6,
+    "Base Price": 16245
+  },
+  {
+    "name": "Moonflower",
+    "baseWeight": 1.9,
+    "Base Price": 8574
+  },
+  {
+    "name": "Moonglow",
+    "baseWeight": 6.65,
+    "Base Price": 18050
+  },
+  {
+    "name": "Mushroom",
+    "baseWeight": 25.9,
+    "Base Price": 136278
+  },
+  {
+    "name": "Nectar Thorn",
+    "baseWeight": 5.76,
+    "Base Price": 30083
+  },
+  {
+    "name": "Nectarine",
+    "baseWeight": 2.807,
+    "Base Price": 35000
+  },
+  {
+    "name": "Nectarshade",
+    "baseWeight": 0.75,
+    "Base Price": 45125
+  },
+  {
+    "name": "Nightshade",
+    "baseWeight": 0.48,
+    "Base Price": 3159
+  },
+  {
+    "name": "Orange Tulip",
+    "baseWeight": 0.05,
+    "Base Price": 751
+  },
+  {
+    "name": "Papaya",
+    "baseWeight": 2.86,
+    "Base Price": 903
+  },
+  {
+    "name": "Parasol Flower",
+    "baseWeight": 5.7,
+    "Base Price": 180500
+  },
+  {
+    "name": "Passionfruit",
+    "baseWeight": 2.867,
+    "Base Price": 3204
+  },
+  {
+    "name": "Peach",
+    "baseWeight": 1.9,
+    "Base Price": 271
+  },
+  {
+    "name": "Pear",
+    "baseWeight": 2.85,
+    "Base Price": 18050
+  },
+  {
+    "name": "Pepper",
+    "baseWeight": 4.75,
+    "Base Price": 7220
+  },
+  {
+    "name": "Pineapple",
+    "baseWeight": 2.85,
+    "Base Price": 1805
+  },
+  {
+    "name": "Pink Lily",
+    "baseWeight": 5.699,
+    "Base Price": 58663
+  },
+  {
+    "name": "Prickly Pear",
+    "baseWeight": 6.65,
+    "Base Price": 6319
+  },
+  {
+    "name": "Pumpkin",
+    "baseWeight": 6.9,
+    "Base Price": 3069
+  },
+  {
+    "name": "Purple Dahlia",
+    "baseWeight": 11.4,
+    "Base Price": 67688
+  },
+  {
+    "name": "Raspberry",
+    "baseWeight": 0.71,
+    "Base Price": 90
+  },
+  {
+    "name": "Red Lollipop",
+    "baseWeight": 3.799,
+    "Base Price": 45102
+  },
+  {
+    "name": "Rose",
+    "baseWeight": 0.95,
+    "Base Price": 4513
+  },
+  {
+    "name": "Rosy Delight",
+    "baseWeight": 9.5,
+    "Base Price": 62273
+  },
+  {
+    "name": "Soul Fruit",
+    "baseWeight": 23.75,
+    "Base Price": 6994
+  },
+  {
+    "name": "Starfruit",
+    "baseWeight": 2.85,
+    "Base Price": 13538
+  },
+  {
+    "name": "Strawberry",
+    "baseWeight": 0.29,
+    "Base Price": 14
+  },
+  {
+    "name": "Succulent",
+    "baseWeight": 4.75,
+    "Base Price": 22563
+  },
+  {
+    "name": "Sugar Apple",
+    "baseWeight": 8.55,
+    "Base Price": 43320
+  },
+  {
+    "name": "Suncoil",
+    "baseWeight": 9.5,
+    "Base Price": 72200
+  },
+  {
+    "name": "Sunflower",
+    "baseWeight": 15.65,
+    "Base Price": 144000
+  },
+  {
+    "name": "Tomato",
+    "baseWeight": 0.44,
+    "Base Price": 27
+  },
+  {
+    "name": "Venus Fly Trap",
+    "baseWeight": 9.5,
+    "Base Price": 40612
+  },
+  {
+    "name": "Violet Corn",
+    "baseWeight": 2.85,
+    "Base Price": 45125
+  },
+  {
+    "name": "Watermelon",
+    "baseWeight": 7.3,
+    "Base Price": 2708
+  },
+  {
+    "name": "Wild Carrot",
+    "baseWeight": 0.286,
+    "Base Price": 22563
+  }
+]
