@@ -151,12 +151,13 @@ export default function BlogPage() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 focus:border-emerald-500"
+                      aria-label="Search grow a garden guides by title, content, or tags"
                     />
                   </div>
 
                   {/* Category filter */}
                   <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white focus:border-emerald-500">
+                    <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white focus:border-emerald-500" aria-label="Filter articles by category">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-700 border-slate-600">
@@ -175,7 +176,7 @@ export default function BlogPage() {
                 {/* Activity filter display */}
                 {(selectedCategory !== 'All' || searchTerm !== '') && (
                   <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-slate-600">
-                    <span className="text-slate-400 text-sm">Active filters:</span>
+                    <span className="text-slate-300 text-sm">Active filters:</span>
                     {searchTerm && (
                       <Badge variant="secondary" className="bg-emerald-900/30 text-emerald-300">
                         Search: {searchTerm}
@@ -193,7 +194,8 @@ export default function BlogPage() {
                         setSearchTerm('');
                         setSelectedCategory('All');
                       }}
-                      className="text-slate-400 hover:text-white h-6"
+                      className="text-slate-300 hover:text-white h-6"
+                      aria-label="Clear all search filters and reset to show all articles"
                     >
                       Clear all
                     </Button>

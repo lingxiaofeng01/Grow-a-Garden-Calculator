@@ -226,12 +226,12 @@ const rarityColors = {
   Event: 'bg-gradient-to-r from-orange-500 to-red-500',
 };
 
-// 导入博客数据
+// Import blog data
 import { getLatestPosts, type BlogPost } from '@/lib/blog-data';
 import { BlogImage } from '@/components/blog-image';
 
 export default function Home() {
-  // SEO结构化数据
+  // SEO structured data
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -268,7 +268,7 @@ export default function Home() {
     "dateModified": "2025-01-10"
   };
 
-  // 现有的状态定义
+  // Existing state definitions
   const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
   const [actualWeight, setActualWeight] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
@@ -281,14 +281,14 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [latestPosts, setLatestPosts] = useState<any[]>([]);
 
-  // 获取最新文章
+  // Get latest articles
   useEffect(() => {
     try {
-      const posts = getLatestPosts(3); // 获取最新3篇文章
+      const posts = getLatestPosts(3); // Get latest 3 articles
       setLatestPosts(posts);
       setIsLoading(false);
     } catch (error) {
-      console.error('获取最新文章失败:', error);
+      console.error('Failed to get latest articles:', error);
       setIsLoading(false);
     }
   }, []);
@@ -299,7 +299,7 @@ export default function Home() {
     setActualWeight(crop.baseWeight.toString()); // Auto-fill weight with base weight
   };
 
-  // 高精度价值计算（无提前四舍五入）
+  // High-precision value calculation (no premature rounding)
   const calculatedValue = useMemo(() => {
     if (!selectedCrop) return 0;
     
@@ -333,7 +333,7 @@ export default function Home() {
     // Official Formula: Total = round(P × V × M × clamp(W/B, 0.95, ∞)² × Quantity × FriendBoost)
     const totalValue = P * V * M * weightCorrection * quantity * friendMultiplier;
     
-    // 调试信息（开发时使用）
+    // Debug information (for development use)
     if (process.env.NODE_ENV === 'development') {
       console.log('Debug Banana calculation:');
       console.log('P:', P);
@@ -369,21 +369,27 @@ export default function Home() {
     const weightRatio = W / baseWeight;
     const weightCorrection = Math.pow(Math.max(weightRatio, 0.95), 2);
     const finalMultiplier = 1 + envBonus + tempBonus;
-    const totalValue = basePrice * growthMultiplier * finalMultiplier * weightCorrection * quantity * (1 + friendBoostPercent / 100);
+    const friendBoostMultiplier = 1 + (friendBoostPercent / 100);
+    const totalValue = basePrice * growthMultiplier * finalMultiplier * weightCorrection * quantity * friendBoostMultiplier;
 
-    // Additional multipliers for analysis
-    const growthMultiplierValue = growthMultiplier;
-    const envTempMultiplier = finalMultiplier;
-    const weightMultiplier = weightCorrection;
-    const friendBoostMultiplier = 1 + friendBoostPercent / 100;
+    // Detailed analysis data
+    const unitValue = totalValue / quantity; // Single crop value
+    const valuePerKg = totalValue / W; // Value per kilogram
+    const valueGainMultiplier = totalValue / (basePrice * quantity); // Improvement compared to base price
 
     return {
       totalValue: Math.round(totalValue),
       baseValue: basePrice,
-      growthMultiplierValue,
-      envTempMultiplier,
-      weightMultiplier,
-      friendBoostMultiplier
+      unitValue: unitValue,
+      valuePerKg: valuePerKg,
+      weightCorrection: weightCorrection,
+      finalMultiplier: finalMultiplier,
+      valueGainMultiplier: valueGainMultiplier,
+      growthMultiplier: growthMultiplier,
+      envBonus: envBonus,
+      tempBonus: tempBonus,
+      friendBoostMultiplier: friendBoostMultiplier,
+      weightRatio: weightRatio
     };
   }, [selectedCrop, selectedGrowthMutation, selectedTempMutation, selectedEnvMutations, actualWeight, quantity, friendBoost]);
 
@@ -432,7 +438,7 @@ export default function Home() {
 
   const rarityOptions = ['All', ...Object.keys(rarityColors)];
 
-  // 添加getTagColor函数
+  // Add getTagColor function
   const getTagColor = (category: string) => {
     const colors: { [key: string]: string } = {
       'Tutorial': 'bg-blue-500/20 text-blue-300',
@@ -516,13 +522,14 @@ export default function Home() {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder-slate-400 focus:border-emerald-500"
+                        aria-label="Search crops by name, category, or type"
                       />
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <Filter className="w-4 h-4 text-slate-400" />
                       <Select value={filterRarity} onValueChange={setFilterRarity}>
-                        <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white focus:border-emerald-500">
+                        <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white focus:border-emerald-500" aria-label="Filter crops by rarity level">
                           <SelectValue placeholder="Filter by rarity" />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-700 border-slate-600">
@@ -550,6 +557,16 @@ export default function Home() {
                                   : 'border-slate-600/50 bg-slate-700/30 hover:border-slate-500 hover:bg-slate-700/50'
                           } ${!crop.obtainable ? 'opacity-60' : ''}`}
                               onClick={() => handleCropSelection(crop)}
+                              role="button"
+                              tabIndex={0}
+                              aria-label={`Select ${crop.name} crop, ${crop.rarity} rarity, base price ${formatPrice(crop.baseValue)}, weight ${crop.baseWeight}kg${!crop.obtainable ? ', event only' : ''}`}
+                              aria-pressed={selectedCrop?.id === crop.id}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleCropSelection(crop);
+                                }
+                              }}
                         >
                               <CardContent className="p-3 lg:p-4">
                                 <div className="flex items-center gap-2 lg:gap-3 mb-2 lg:mb-3">
@@ -558,7 +575,7 @@ export default function Home() {
                                     <h3 className="font-semibold text-white text-sm lg:text-base truncate">
                                       {crop.name}
                                     </h3>
-                                    <p className="text-xs lg:text-sm text-slate-400 truncate">
+                                    <p className="text-xs lg:text-sm text-slate-300 truncate">
                                       {crop.category}
                                     </p>
                               </div>
@@ -571,7 +588,7 @@ export default function Home() {
                                     <p className="text-emerald-400 font-bold text-sm lg:text-base">
                                       {formatPrice(crop.baseValue)}
                               </p>
-                                    <p className="text-xs text-slate-500">Base Price</p>
+                                    <p className="text-xs text-slate-300">Base Price</p>
                                   </div>
                                   <div className="text-right">
                               {!crop.obtainable && (
@@ -579,7 +596,7 @@ export default function Home() {
                                         Event Only
                                 </Badge>
                               )}
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-xs text-slate-300">
                                       {crop.baseWeight}kg
                                     </p>
                                   </div>
@@ -591,8 +608,8 @@ export default function Home() {
                             <div className="text-sm">
                               <p><strong>Base Price (P):</strong> {formatPrice(crop.baseValue)}</p>
                               <p><strong>Base Weight (B):</strong> {crop.baseWeight}kg</p>
-                              <p className="text-xs text-slate-400 mt-1">
-                                Used in weight correction: clamp(W/B, 0.95, ∞)²
+                              <p className="text-xs text-slate-300 mt-1">
+                                Used in weight correction
                               </p>
                             </div>
                           </TooltipContent>
@@ -648,8 +665,8 @@ export default function Home() {
                   {/* Weight and Quantity */}
                     <div className="grid grid-cols-2 gap-3 lg:gap-4">
                     <div>
-                        <Label htmlFor="weight" className="text-slate-300 text-sm lg:text-base flex items-center gap-2 mb-2">
-                          Weight (W) <span className="text-xs lg:text-sm text-slate-400">kg</span>
+                        <Label htmlFor="weight" className="text-slate-200 text-sm lg:text-base flex items-center gap-2 mb-2">
+                          Weight (W) <span className="text-xs lg:text-sm text-slate-300">kg</span>
                         </Label>
                       <Input
                         id="weight"
@@ -659,13 +676,15 @@ export default function Home() {
                           min="0.01"
                           step="0.01"
                           className="bg-slate-700/50 border-slate-600 text-white text-sm lg:text-base h-10 lg:h-12 focus:border-emerald-500"
+                          aria-describedby="weight-help"
+                          aria-label="Crop weight in kilograms"
                         />
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p id="weight-help" className="text-xs text-slate-300 mt-1">
                           Used in weight correction
                         </p>
                     </div>
                     <div>
-                        <Label htmlFor="quantity" className="text-slate-300 text-sm lg:text-base mb-2 block">
+                        <Label htmlFor="quantity" className="text-slate-200 text-sm lg:text-base mb-2 block">
                           Quantity
                         </Label>
                       <Input
@@ -675,8 +694,10 @@ export default function Home() {
                         onChange={(e) => setQuantity(Number(e.target.value))}
                         min="1"
                           className="bg-slate-700/50 border-slate-600 text-white text-sm lg:text-base h-10 lg:h-12 focus:border-emerald-500"
+                          aria-describedby="quantity-help"
+                          aria-label="Number of crops to calculate"
                       />
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p id="quantity-help" className="text-xs text-slate-300 mt-1">
                           Direct multiplier
                         </p>
                     </div>
@@ -684,9 +705,9 @@ export default function Home() {
 
                   {/* Friend Boost */}
                   <div>
-                      <Label className="text-slate-300 text-sm lg:text-base flex items-center gap-2 mb-3">
+                      <Label className="text-slate-200 text-sm lg:text-base flex items-center gap-2 mb-3">
                         Friend Boost: {friendBoost}%
-                        <span className="text-xs lg:text-sm text-slate-400">
+                        <span className="text-xs lg:text-sm text-slate-300">
                           (×{(1 + friendBoost / 100).toFixed(2)})
                         </span>
                       </Label>
@@ -696,8 +717,9 @@ export default function Home() {
                       max={100}
                       step={1}
                       className="flex-1"
+                      aria-label={`Friend boost percentage slider, current value ${friendBoost}%`}
                     />
-                      <p className="text-xs text-slate-400 mt-2">
+                      <p className="text-xs text-slate-300 mt-2">
                         Final multiplier applied
                       </p>
                   </div>
@@ -706,11 +728,16 @@ export default function Home() {
 
                   {/* Growth Mutations */}
                   <div>
-                      <Label className="text-slate-300 text-sm lg:text-base mb-3 block flex items-center gap-2">
+                      <Label className="text-slate-200 text-sm lg:text-base mb-3 block flex items-center gap-2">
                         <Crown className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400" />
                         Growth Mutation (V)
                       </Label>
-                      <RadioGroup value={selectedGrowthMutation} onValueChange={setSelectedGrowthMutation} className="space-y-2 lg:space-y-3">
+                      <RadioGroup 
+                        value={selectedGrowthMutation} 
+                        onValueChange={setSelectedGrowthMutation} 
+                        className="space-y-2 lg:space-y-3"
+                        aria-label="Select growth mutation type"
+                      >
                         {growthMutations.map((mutation) => {
                           return (
                             <Tooltip key={mutation.id}>
@@ -720,9 +747,9 @@ export default function Home() {
                                     ? 'bg-yellow-900/30 border-yellow-500/50 shadow-lg'
                                     : 'border-slate-600/50 hover:bg-slate-700/30 hover:border-slate-500'
                                 }`}>
-                                  <RadioGroupItem value={mutation.id} id={mutation.id} className="border-slate-400" />
+                                  <RadioGroupItem value={mutation.id} id={`growth-${mutation.id}`} className="border-slate-400" />
                                   <Label
-                                    htmlFor={mutation.id}
+                                    htmlFor={`growth-${mutation.id}`}
                                     className={`text-sm lg:text-base cursor-pointer flex-1 transition-colors ${
                                       mutation.id === 'golden' ? 'text-yellow-400' : 
                                       mutation.id === 'rainbow' ? 'text-purple-400' : 
@@ -762,11 +789,16 @@ export default function Home() {
 
                     {/* Temperature Mutations */}
                     <div>
-                      <Label className="text-slate-300 text-sm lg:text-base mb-3 block flex items-center gap-2">
+                      <Label className="text-slate-200 text-sm lg:text-base mb-3 block flex items-center gap-2">
                         <Moon className="w-4 h-4 lg:w-5 lg:h-5 text-blue-400" />
                         Temperature Mutation
                       </Label>
-                      <RadioGroup value={selectedTempMutation} onValueChange={setSelectedTempMutation} className="space-y-2 lg:space-y-3">
+                      <RadioGroup 
+                        value={selectedTempMutation} 
+                        onValueChange={setSelectedTempMutation} 
+                        className="space-y-2 lg:space-y-3"
+                        aria-label="Select temperature mutation type"
+                      >
                         {tempMutations.map((mutation) => {
                           return (
                             <Tooltip key={mutation.id}>
@@ -776,9 +808,9 @@ export default function Home() {
                                     ? 'bg-blue-900/30 border-blue-500/50 shadow-lg'
                                     : 'border-slate-600/50 hover:bg-slate-700/30 hover:border-slate-500'
                                 }`}>
-                                  <RadioGroupItem value={mutation.id} id={mutation.id} className="border-slate-400" />
+                                  <RadioGroupItem value={mutation.id} id={`temp-${mutation.id}`} className="border-slate-400" />
                                   <Label
-                                    htmlFor={mutation.id}
+                                    htmlFor={`temp-${mutation.id}`}
                                     className={`text-sm lg:text-base cursor-pointer flex-1 transition-colors ${
                                       mutation.id === 'wet' ? 'text-emerald-400' : 
                                       mutation.id === 'chilled' ? 'text-blue-400' : 
@@ -819,7 +851,7 @@ export default function Home() {
                   {/* Environmental Mutations */}
                   <div>
                       <div className="flex items-center justify-between mb-3">
-                        <Label className="text-slate-300 text-sm lg:text-base flex items-center gap-2">
+                        <Label className="text-slate-200 text-sm lg:text-base flex items-center gap-2">
                           <Sparkles className="w-4 h-4 lg:w-5 lg:h-5 text-purple-400" />
                           Environmental ({selectedEnvMutations.length})
                         </Label>
@@ -827,7 +859,8 @@ export default function Home() {
                           size="sm"
                           variant="outline"
                           onClick={() => setSelectedEnvMutations([...selectedEnvMutations, ...envMutations.filter(m => !selectedEnvMutations.includes(m.name)).map(m => m.name)])}
-                          className="border-slate-600 text-slate-300 text-xs hover:border-emerald-500"
+                          className="border-slate-600 text-slate-200 text-xs hover:border-emerald-500 hover:text-white"
+                          aria-label="Add all environmental mutations to selection"
                         >
                           Add All Mutations
                         </Button>
@@ -835,7 +868,7 @@ export default function Home() {
 
                       {selectedEnvMutations.length > 0 && (
                         <div className="mb-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600/50">
-                          <p className="text-sm text-slate-400 mb-1">Total Bonus:</p>
+                          <p className="text-sm text-slate-300 mb-1">Total Bonus:</p>
                           <p className="text-emerald-400 font-bold text-base lg:text-lg">
                             +{selectedEnvMutations.reduce((sum, mutationName) => {
                               const mutation = envMutations.find(m => m.name === mutationName);
@@ -869,19 +902,20 @@ export default function Home() {
                                             : 'border-slate-600/50 hover:bg-slate-700/30 hover:border-slate-500'
                                         }`}>
                             <Checkbox
-                              id={mutation.name}
+                              id={`env-mutation-${mutation.name}`}
                               checked={selectedEnvMutations.includes(mutation.name)}
                               onCheckedChange={(checked) => 
                                 handleEnvMutationChange(mutation.name, checked as boolean)
                               }
                                             className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                                            aria-describedby={`env-mutation-desc-${mutation.name}`}
                             />
                             <Label 
-                              htmlFor={mutation.name} 
+                              htmlFor={`env-mutation-${mutation.name}`} 
                                             className={`flex-1 cursor-pointer text-xs lg:text-sm transition-colors ${
                                               selectedEnvMutations.includes(mutation.name)
-                                                ? 'text-emerald-300 font-medium'
-                                                : 'text-slate-300'
+                                                ? 'text-emerald-200 font-medium'
+                                                : 'text-slate-200'
                                             }`}
                             >
                               {mutation.name}
@@ -920,13 +954,15 @@ export default function Home() {
                       <Button 
                         onClick={clearAll} 
                         variant="outline" 
-                        className="flex-1 border-slate-600 text-slate-300 text-sm lg:text-base h-10 lg:h-12 hover:border-slate-500"
+                        className="flex-1 border-slate-600 text-slate-200 text-sm lg:text-base h-10 lg:h-12 hover:border-slate-500 hover:text-white"
+                        aria-label="Reset all selections and parameters to default values"
                       >
                         Reset All
                     </Button>
                       <Button 
                         onClick={setMaxMutations} 
                         className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-sm lg:text-base h-10 lg:h-12"
+                        aria-label="Apply maximum mutations for highest value calculation"
                       >
                       Max Mutations
                     </Button>
@@ -944,66 +980,143 @@ export default function Home() {
                 </CardHeader>
                   <CardContent className="px-4 lg:px-6 pb-4 lg:pb-6">
                     <div className="space-y-4 lg:space-y-6">
-                      <div className="bg-gradient-to-r from-emerald-600/20 to-emerald-500/20 rounded-xl p-6 lg:p-8 border border-emerald-500/30 shadow-lg">
-                        <p className="text-2xl lg:text-4xl xl:text-5xl font-bold text-emerald-300 mb-2 lg:mb-3 drop-shadow-lg text-center">
-                          {formatPrice(calculatedValue)}
-                        </p>
-                        <p className="text-emerald-100 text-base lg:text-xl font-medium text-center">Total Value</p>
-                        <p className="text-emerald-200/70 text-xs lg:text-sm mt-1 lg:mt-2 text-center">
-                          Using Official Formula
-                        </p>
-                    </div>
-                    
-                    {selectedCrop && parseFloat(actualWeight) > 0 && (
-                          <div className="grid grid-cols-2 gap-3 lg:gap-4 text-sm">
-                            <div className="bg-slate-700/40 rounded-lg p-3 lg:p-4 border border-slate-600/50">
-                              <p className="text-emerald-300 font-bold text-base lg:text-xl">
-                                {formatPrice(Math.round(calculatedValue / parseFloat(actualWeight)))}
-                            </p>
-                              <p className="text-slate-300 text-sm lg:text-base mt-1">Per kg</p>
-                            </div>
-                            <div className="bg-slate-700/40 rounded-lg p-3 lg:p-4 border border-slate-600/50">
-                              <p className="text-blue-300 font-bold text-base lg:text-xl">
-                                {Math.round((parseFloat(actualWeight) || 1) / (selectedCrop?.baseWeight || 1) * 100)}%
+                      {selectedCrop && parseFloat(actualWeight) > 0 && revenueAnalysis ? (
+                        <>
+                          {/* Final Result - Most Prominent Position */}
+                          <div className="bg-gradient-to-r from-emerald-500/30 to-green-500/30 rounded-2xl p-8 lg:p-12 border-2 border-emerald-400/50 shadow-2xl shadow-emerald-500/20">
+                            <div className="text-center">
+                              <p className="text-emerald-200/80 text-lg lg:text-2xl font-medium mb-2">
+                                Final Result
                               </p>
-                              <p className="text-slate-300 text-sm lg:text-base mt-1">Weight Ratio</p>
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {latestPosts.map((post: any, index: number) => (
-                                  <Badge
-                                    key={index}
-                                    variant="outline"
-                                    className={`text-xs ${getTagColor(post.category)} border-none cursor-pointer hover:scale-105 transition-transform`}
-                                  >
-                                    {post.category}
-                                  </Badge>
-                                ))}
-                              </div>
-                              <div className="mt-3">
-                                <div className="bg-slate-800/50 rounded-lg p-3 lg:p-4 border border-slate-600/50">
-                                  <div className="flex items-center justify-between mb-2">
-                                    <h4 className="text-white font-semibold text-sm lg:text-base">Weight Analysis</h4>
-                                    <Calculator className="w-4 h-4 text-emerald-400" />
-                                  </div>
-                                  <p className="text-xs text-slate-400 mt-1 hidden lg:block">
-                                    ({parseFloat(actualWeight)} / {selectedCrop?.baseWeight})²
-                                  </p>
-                                </div>
+                              <p className="text-4xl lg:text-6xl xl:text-7xl font-black text-white mb-4 drop-shadow-2xl tracking-tight">
+                                {formatPrice(calculatedValue)}
+                              </p>
+                              <div className="flex items-center justify-center gap-4 text-emerald-100/90">
+                                <span className="text-2xl lg:text-3xl">{selectedCrop.icon}</span>
+                                <span className="text-xl lg:text-2xl font-semibold">
+                                  {selectedCrop.name}
+                                </span>
                               </div>
                             </div>
                           </div>
-                        )}
-                      
-                      {/* Revenue Analysis Chart */}
-                      {revenueAnalysis && (
-                          <div className="mt-4 lg:mt-6 pt-3 lg:pt-4 border-t border-slate-600/50">
-                              <div className="text-xs lg:text-sm text-slate-300 bg-slate-700/30 rounded-lg p-3 lg:p-4">
-                                <h4 className="text-white font-semibold mb-2 lg:mb-3">Revenue Analysis & Formula Breakdown</h4>
-                                <div className="space-y-2 text-xs lg:text-sm">
-                                  <p><span className="text-emerald-400 font-bold">Total Value:</span> {formatPrice(calculatedValue)}</p>
-                                  <p><span className="text-blue-400 font-bold">Value per kg:</span> {formatPrice(Math.round(calculatedValue / parseFloat(actualWeight)))}</p>
+
+                          {/* Main Result Card - Detailed Analysis */}
+                          <div className="bg-slate-800/60 rounded-xl p-6 lg:p-8 border border-slate-600/50 shadow-lg">
+                            <h3 className="text-white text-lg lg:text-xl font-semibold mb-6 flex items-center gap-2">
+                              <Calculator className="w-5 h-5 text-emerald-400" />
+                              Detailed Revenue Analysis
+                            </h3>
+                            
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                              {/* Left - Weight Correction */}
+                              <div className="bg-slate-700/40 rounded-lg p-4 border border-slate-600/30">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-lg">📏</span>
+                                  <h4 className="text-white font-semibold">Weight Correction</h4>
                                 </div>
+                                <p className="text-2xl lg:text-3xl font-bold text-blue-300">
+                                  {revenueAnalysis.weightCorrection.toFixed(5)}
+                                </p>
+                                <p className="text-xs lg:text-sm text-slate-300 mt-1">
+                                  ({parseFloat(actualWeight)} / {selectedCrop.baseWeight})²
+                                </p>
+                              </div>
+
+                              {/* Right - Mutation Multiplier */}
+                              <div className="bg-slate-700/40 rounded-lg p-4 border border-slate-600/30">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-lg">🔥</span>
+                                  <h4 className="text-white font-semibold">Mutation Multiplier</h4>
+                                </div>
+                                <p className="text-2xl lg:text-3xl font-bold text-purple-300">
+                                  ×{(revenueAnalysis.growthMultiplier * revenueAnalysis.finalMultiplier).toLocaleString()}
+                                </p>
+                                <p className="text-xs lg:text-sm text-slate-300 mt-1">
+                                  {growthMutations.find(g => g.id === selectedGrowthMutation)?.name} ×{revenueAnalysis.growthMultiplier} + 
+                                  {revenueAnalysis.envBonus > 0 || revenueAnalysis.tempBonus > 0 ? 
+                                    ` Env +${revenueAnalysis.envBonus + revenueAnalysis.tempBonus}` : 
+                                    ' No Environmental Bonus'
+                                  }
+                                </p>
+                              </div>
+
+                              {/* Bottom - Value Per Kilogram */}
+                              <div className="bg-slate-700/40 rounded-lg p-4 border border-slate-600/30">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-lg">💰</span>
+                                  <h4 className="text-white font-semibold">Value Per Kilogram</h4>
+                                </div>
+                                <p className="text-xl lg:text-2xl font-bold text-yellow-300">
+                                  {formatPrice(Math.round(revenueAnalysis.valuePerKg))}
+                                </p>
+                                <p className="text-xs lg:text-sm text-slate-300 mt-1">
+                                  Efficiency Metric
+                                </p>
+                              </div>
+
+                              {/* Bottom - Base Price Increase */}
+                              <div className="bg-slate-700/40 rounded-lg p-4 border border-slate-600/30">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-lg">📈</span>
+                                  <h4 className="text-white font-semibold">Base Price Increase</h4>
+                                </div>
+                                <p className="text-xl lg:text-2xl font-bold text-emerald-300">
+                                  {Math.round(revenueAnalysis.valueGainMultiplier).toLocaleString()}× Multiplier
+                                </p>
+                                <p className="text-xs lg:text-sm text-slate-300 mt-1">
+                                  Base Price: {formatPrice(revenueAnalysis.baseValue)}
+                                </p>
                               </div>
                             </div>
+                          </div>
+
+                          {/* Detailed Formula Breakdown */}
+                          <div className="bg-slate-700/30 rounded-lg p-4 lg:p-6 border border-slate-600/50">
+                            <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                              <Calculator className="w-4 h-4 text-emerald-400" />
+                              Formula Breakdown & Calculation Steps
+                            </h4>
+                            <div className="space-y-3 text-sm">
+                              <div className="bg-slate-800/40 rounded p-3">
+                                <p className="text-slate-200 mb-2">
+                                  <span className="font-semibold text-emerald-400">Official Formula:</span> 
+                                  Total = round(P × V × M × clamp(W/B, 0.95, ∞)² × Qty × Friend)
+                                </p>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 text-xs">
+                                  <p><span className="text-blue-300">P (Base Price):</span> {revenueAnalysis.baseValue.toLocaleString()}</p>
+                                  <p><span className="text-purple-300">V (Growth Multiplier):</span> {revenueAnalysis.growthMultiplier}</p>
+                                  <p><span className="text-yellow-300">M (Environment Multiplier):</span> {revenueAnalysis.finalMultiplier}</p>
+                                  <p><span className="text-cyan-300">Weight Correction:</span> {revenueAnalysis.weightCorrection.toFixed(3)}</p>
+                                  <p><span className="text-pink-300">Quantity:</span> {quantity}</p>
+                                  <p><span className="text-orange-300">Friend Boost:</span> {revenueAnalysis.friendBoostMultiplier.toFixed(2)}</p>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center justify-between bg-gradient-to-r from-emerald-800/40 to-emerald-700/40 rounded p-3">
+                                <span className="text-white font-semibold">Calculation Result:</span>
+                                <span className="text-emerald-300 font-bold text-lg">
+                                  {formatPrice(calculatedValue)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        /* Default Display (When No Crop Selected) */
+                        <div className="bg-gradient-to-r from-emerald-600/20 to-emerald-500/20 rounded-xl p-6 lg:p-8 border border-emerald-500/30 shadow-lg">
+                          <p className="text-2xl lg:text-4xl xl:text-5xl font-bold text-emerald-300 mb-2 lg:mb-3 drop-shadow-lg text-center">
+                            {formatPrice(calculatedValue)}
+                          </p>
+                          <p className="text-emerald-100 text-base lg:text-xl font-medium text-center">Total Value</p>
+                          <p className="text-emerald-200/70 text-xs lg:text-sm mt-1 lg:mt-2 text-center">
+                            Using Official Formula
+                          </p>
+                          {!selectedCrop && (
+                            <p className="text-center text-slate-300 text-sm mt-4">
+                              Select a crop to start revenue analysis
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
                   </CardContent>
@@ -1256,7 +1369,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 最新文章板块 */}
+        {/* Latest Articles Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -1358,7 +1471,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* 查看更多按钮 */}
+            {/* View More Button */}
             {latestPosts.length > 0 && (
               <div className="text-center">
                 <Link href="/blog">
@@ -1385,7 +1498,7 @@ export default function Home() {
                 optimize mutations with our grow a garden mutation calculator, and maximize your farming profits with our professional grow a garden price calculator tools.
               </p>
               
-              {/* 导航链接 */}
+              {/* Navigation Links */}
               <div className="flex justify-center gap-8 mb-6">
                 <Link href="/" className="text-slate-300 hover:text-emerald-400 transition-colors flex items-center gap-2">
                   <Calculator className="w-4 h-4" />
