@@ -1509,7 +1509,20 @@ export default function Home() {
                   Blog & Guides
                 </Link>
               </div>
-              
+
+              {/* Friendly Links */}
+              <div className="flex justify-center gap-4 mb-6">
+                <span className="text-slate-400 text-sm">Friendly Links:</span>
+                <a
+                  href="https://www.soflowheelie.com/"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="text-slate-300 hover:text-emerald-400 transition-colors text-sm"
+                >
+                  SoFlo Wheelie
+                </a>
+              </div>
+
               <div className="flex justify-center space-x-6 text-sm text-slate-500">
                 <span>&copy; {new Date().getFullYear()} Grow a Garden Calculator</span>
                 <span>•</span>
